@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TableLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:padding="4dip"
+	android:stretchColumns="1"
+	android:gravity="center_horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<TableRow android:gravity="center">
+		<Button android:id="@+id/bind"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" 
+			android:text="Launch/Connect">
+			<requestFocus />
+		</Button>
+		<Button android:id="@+id/convert"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" 
+			android:text="Convert All">
+		</Button>
+		<TextView	android:id="@+id/filler"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:text="Delay (min.\n1000 ms)">
+		</TextView>
+	</TableRow>
+
+	<TableRow>
+		<Button android:id="@+id/unbind"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" 
+				android:text="Stop">
+		</Button>
+		<Button android:id="@+id/about"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" 
+			android:text="About">
+		</Button>
+		<EditText
+			android:id="@+id/delay"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:numeric="integer"
+			android:text="1000">
+		</EditText>
+	</TableRow>
+
+	<SurfaceView
+		android:id="@+id/view"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_weight="1"
+		android:text="surface_view"
+	/>
+
+</TableLayout>
+
