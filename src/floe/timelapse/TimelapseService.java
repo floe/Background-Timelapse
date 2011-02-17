@@ -42,12 +42,11 @@ public class TimelapseService extends Service {
 	private Camera cam;
 	private String outdir;
 
-	private Camera.PreviewCallback imageCallback = new Camera.PreviewCallback() {
-	//private Camera.PictureCallback imageCallback = new Camera.PictureCallback() {
 
-		@Override
-		public void onPreviewFrame( byte[] _data, Camera _camera ) {
-		//public void onPictureTaken( byte[] _data, Camera _camera ) {
+	// preview callback with actual image data
+	private Camera.PreviewCallback imageCallback = new Camera.PreviewCallback() {
+
+		@Override public void onPreviewFrame( byte[] _data, Camera _camera ) {
 
 			Log.v( TAG, "picture retrieved, storing.." );
 			//String myname = outdir.concat("img").concat(String.valueOf(counter++)).concat(".yuv");
@@ -83,10 +82,10 @@ public class TimelapseService extends Service {
 		}
 	};*/
 
+
+	// Timer task for continuous triggering of preview callbacks
 	private TimerTask myLoop = new TimerTask() {
-		int num;
-		@Override
-		public void run() {
+		@Override public void run() {
 			//Log.v( TAG, "starting autofocus" );
 			//cam.autoFocus( afCallback );
 			Log.v( TAG, "taking picture" );
@@ -95,27 +94,31 @@ public class TimelapseService extends Service {
 		}
 	};
 
+
+	// Binder class for activity <-> service interface
 	public class TimelapseBinder extends Binder {
 		TimelapseService getService() {
 			return TimelapseService.this;
 		}
 	}
 	
-	private final IBinder mBinder = new TimelapseBinder();
+	private final IBinder mybinder = new TimelapseBinder();
 
-	@Override
-	public IBinder onBind( Intent intent ) {
-		return mBinder;
+	@Override public IBinder onBind( Intent intent ) {
+		return mybinder;
 	}
+
 
 	// called when service gets started
 	@Override public void onCreate() {
 
 		TAG = "Timelapse";
 
-		Toast.makeText(this, "Timelapse service started", Toast.LENGTH_SHORT).show();
+		try {
 
 		cam = Camera.open();
+
+		Toast.makeText(this, "Timelapse service started", Toast.LENGTH_SHORT).show();
 
 		mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
@@ -127,10 +130,17 @@ public class TimelapseService extends Service {
 		contentIntent = PendingIntent.getActivity(this, 0, new Intent(TimelapseService.this, Timelapse.class), 0);
 
 		showNotification( "Images: 0" );
+
+		} catch (Exception e) {
+			Log.e( TAG, "TimelapseService::onCreate: " + e.toString() );
+			Toast.makeText(this, "Timelapse service error (camera problem?)", Toast.LENGTH_SHORT).show();
+		}
 	}
+
 
 	// called when service quits
 	@Override public void onDestroy() {
+
 		// Tell the user we stopped.
 		Toast.makeText(this, "Timelapse service stopped", Toast.LENGTH_SHORT).show();
 
@@ -145,15 +155,17 @@ public class TimelapseService extends Service {
 		cam.release();
 	}
 
+
 	// after service has been started, this is called from the Activity to set the preview surface
 	public void setView( SurfaceView sv ) {
+
 		try {
 
 			Log.v( TAG, "Surfaceview: " + sv.toString() );
 
 			Camera.Parameters param = cam.getParameters();
 			param.setPreviewFormat( PixelFormat.YCbCr_420_SP );
-			param.setPreviewSize( 640, 480);
+			param.setPreviewSize( 640, 480 );
 			cam.setParameters( param );
 
 			cam.setPreviewDisplay( sv.getHolder() );
@@ -163,6 +175,7 @@ public class TimelapseService extends Service {
 			Log.e( TAG, "TimelapseService::setView: " + e.toString() );
 		}
 	}
+
 
 	// launch the timer
 	public void startTimer( int delay ) {
