@@ -148,9 +148,17 @@ public class TimelapseService extends Service {
 	// after service has been started, this is called from the Activity to set the preview surface
 	public void setView( SurfaceView sv ) {
 		try {
+
 			Log.v( TAG, "Surfaceview: " + sv.toString() );
+
+			Camera.Parameters param = cam.getParameters();
+			param.setPreviewFormat( PixelFormat.YCbCr_420_SP );
+			param.setPreviewSize( 640, 480);
+			cam.setParameters( param );
+
 			cam.setPreviewDisplay( sv.getHolder() );
 			cam.startPreview();
+
 		} catch (Exception e) {
 			Log.e( TAG, "TimelapseService::setView: " + e.toString() );
 		}

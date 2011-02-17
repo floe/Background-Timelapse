@@ -176,8 +176,8 @@ public class Timelapse extends Activity {
 						Log.v( "TL", "got " + subdirs.length + " directories" );
 
 						int curdirnum = 0;
-						int[] outbuf = new int[480*320];
-						byte[] inbuf = new byte[480*320*3/2];
+						int[] outbuf = new int[640*480];
+						byte[] inbuf = new byte[640*480*3/2];
 
 						for (File curdir: subdirs) {
 
@@ -199,8 +199,8 @@ public class Timelapse extends Activity {
 								infile.read( inbuf );
 								infile.close();
 
-								decodeYUV420SP( outbuf, inbuf, 480, 320 );
-								Bitmap result = Bitmap.createBitmap( outbuf, 480, 320, Bitmap.Config.ARGB_8888 );
+								decodeYUV420SP( outbuf, inbuf, 640, 480 );
+								Bitmap result = Bitmap.createBitmap( outbuf, 640, 480, Bitmap.Config.ARGB_8888 );
 
 								FileOutputStream outfile = new FileOutputStream( outpath );
 								result.compress( Bitmap.CompressFormat.PNG, 100, outfile );

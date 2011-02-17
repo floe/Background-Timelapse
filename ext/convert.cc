@@ -7,13 +7,13 @@ int main( int argc, char* argv[] ) {
 
 	initLUT();
 
-	YUV420SPImage img(480,320);
+	YUV420SPImage img(640,480);
 
 	FILE* fin = fopen( argv[1], "r" );
-	fread( img.getData(), 1, 230400, fin );
+	fread( img.getData(), 1, 460800, fin );
 	fclose(fin);
 
-	RGBImage out(480,320);
+	RGBImage out(640,480);
 
 	img.getImage( out );
 
