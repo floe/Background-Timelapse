@@ -120,8 +120,9 @@ public class Timelapse extends Activity {
 			now.set( System.currentTimeMillis() );
 
 			outdir = "/sdcard/floe.timelapse/" + now.format("%Y%m%d-%H%M/");
-			if (new File(outdir).mkdirs() == false) {
-				Toast.makeText( Timelapse.this, "Error starting service - SD card not mounted?", Toast.LENGTH_SHORT).show();
+			File tmp = new File(outdir);
+			if ((tmp.isDirectory() == false) && (tmp.mkdirs() == false)) {
+				Toast.makeText( Timelapse.this, "Error creating output directory - SD card not mounted?", Toast.LENGTH_SHORT ).show();
 				return;
 			}
 
@@ -225,7 +226,7 @@ public class Timelapse extends Activity {
 
 	private OnClickListener mAboutListener = new OnClickListener() {
 		public void onClick( View v ) {
-			String msg = "Timelapse 0.1\n(c) 2010 by floe@butterbrot.org\n\nContinously captures images in the background for timelapse videos.\n\nLaunch/Connect: start the capture service\nStop: shut down the service\nConvert All: transform temporary images to PNGs (warning: slow!)\nAbout: this cruft\nDelay: milliseconds between captures";
+			String msg = "Timelapse 0.2\n(c) 2011 by floe@butterbrot.org\n\nContinously captures images in the background for timelapse videos.\n\nStart: start the capture service\nStop: shut down the service\nConvert All: transform temporary images to PNGs (warning: slow!)\nAbout: this cruft\nDelay: milliseconds between captures";
 			new AlertDialog.Builder( Timelapse.this )
 				.setMessage(msg)
 				.setPositiveButton( "Close", new DialogInterface.OnClickListener() { public void onClick(DialogInterface dialog, int id) { dialog.cancel(); }})

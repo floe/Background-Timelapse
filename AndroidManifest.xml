@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="floe.timelapse"
-      android:versionCode="1"
-      android:versionName="0.1">
+      android:versionCode="2"
+      android:versionName="0.2">
     <application android:label="@string/app_name" android:debuggable="true" android:icon="@drawable/stopwatch">
         <service android:name=".TimelapseService" />
         <activity android:name=".Timelapse"
@@ -15,6 +15,6 @@
     </application>
 		<uses-permission android:name="android.permission.CAMERA"/>
 		<uses-feature android:name="android.hardware.camera" />
-		<uses-sdk android:minSdkVersion="3" />
+		<uses-sdk android:minSdkVersion="4" />
 		<!--uses-feature android:name="android.hardware.camera.autofocus" /-->
 </manifest> 
