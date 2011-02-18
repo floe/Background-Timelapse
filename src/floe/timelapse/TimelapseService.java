@@ -114,6 +114,7 @@ public class TimelapseService extends Service {
 
 		TAG = "Timelapse";
 		mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		timer = new Timer("TimelapseService");
 
 		try {
 			cam = Camera.open();
@@ -150,7 +151,7 @@ public class TimelapseService extends Service {
 		mNM.cancel( R.drawable.camera_tiny );
 
 		// stop the timer
-		timer.cancel();
+		myLoop.cancel();
 
 		// cleanup the camera
 		cam.stopPreview();
@@ -158,8 +159,8 @@ public class TimelapseService extends Service {
 	}
 
 
-	// after service has been started, this is called from the Activity to set the preview surface
-	public void setView( SurfaceView sv ) {
+	// after service has been started, this is called from the Activity to set the preview surface and launch the timer task
+	public void launch( SurfaceView sv, int delay ) {
 
 		try {
 
@@ -173,17 +174,12 @@ public class TimelapseService extends Service {
 			cam.setPreviewDisplay( sv.getHolder() );
 			cam.startPreview();
 
+			if (setupOutdir() == false) return;
+			timer.scheduleAtFixedRate( myLoop, delay, delay );
+
 		} catch (Exception e) {
 			Log.e( TAG, "TimelapseService::setView: " + e.toString() );
 		}
-	}
-
-
-	// launch the timer
-	public void startTimer( int delay ) {
-		if (setupOutdir() == false) return;
-		timer = new Timer("TimelapseService");
-		timer.scheduleAtFixedRate( myLoop, delay, delay );
 	}
 
 

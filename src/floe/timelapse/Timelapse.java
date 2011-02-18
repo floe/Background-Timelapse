@@ -111,18 +111,22 @@ public class Timelapse extends Activity {
 		}
 	};
 
+
+	// get delay value in ms from input element
+	private int getDelay() {
+		int mydelay = 1000;
+		String delaytext = ((EditText)findViewById(R.id.delay)).getText().toString();
+		try {
+			mydelay = Integer.decode(delaytext);
+		} catch (Exception e) { }
+		if (mydelay < 1000) mydelay = 1000;
+		return mydelay;
+	}
+
 	private OnClickListener mBindListener = new OnClickListener() {
 		public void onClick(View v) {
 
-			int mydelay = 1000;
-			String delaytext = ((EditText)findViewById(R.id.delay)).getText().toString();
-			try {
-				mydelay = Integer.decode(delaytext);
-			} catch (Exception e) { }
-			if (mydelay < 1000) mydelay = 1000;
-
-			mBoundService.startTimer( mydelay );
-			mBoundService.setView( sv );
+			mBoundService.launch( sv, getDelay() );
 
 			// Establish a connection with the service.  We use an explicit
 			// class name because we want a specific service implementation that
