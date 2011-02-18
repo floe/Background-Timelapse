@@ -38,7 +38,7 @@ public class TimelapseService extends Service {
 
 	private final String TAG = "TimelapseService";
 
-	private int counter;
+	private int counter = 0;
 	private Camera cam;
 	private String outdir;
 
@@ -207,13 +207,15 @@ public class TimelapseService extends Service {
 		Time now = new Time();
 		now.set( System.currentTimeMillis() );
 
-		outdir = "/sdcard/floe.timelapse/" + now.format("%Y%m%d-%H%M/");
+		outdir = "/sdcard/floe.timelapse/" + now.format("%Y%m%d-%H%M%S/");
 		File tmp = new File(outdir);
 
 		if ((tmp.isDirectory() == false) && (tmp.mkdirs() == false)) {
 			Toast.makeText( this, "Error creating output directory - SD card not mounted?", Toast.LENGTH_SHORT ).show();
 			throw new RuntimeException( "Error creating output directory." );
 		}
+
+		counter = 0;
 	}
 
 
