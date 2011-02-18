@@ -60,7 +60,7 @@ public class TimelapseService extends Service {
 				outfile.close();
 
 				CharSequence text = "Images: ".concat(String.format("%d",counter));
-				showNotification( text );
+				updateNotification( text );
 
 				Log.v( TAG, "picture stored successfully as " + myname );
 
@@ -125,8 +125,88 @@ public class TimelapseService extends Service {
 		}
 	}
 
-	// called when service gets started
-	@Override public void onStart( Intent i, int id ) {
+	// called when service quits
+	@Override public void onDestroy() {
+
+		// Tell the user we stopped.
+		Toast.makeText(this, "Timelapse service stopped", Toast.LENGTH_SHORT).show();
+
+		// cleanup everything
+		cleanup();
+		cam.release();
+	}
+
+
+	// after service has been started, this is called from the Activity to set the preview surface and launch the timer task
+	public void launch( SurfaceView sv, int delay ) {
+
+		try {
+
+			setupCamera( sv );
+			setupOutdir();
+
+			timer.scheduleAtFixedRate( myLoop, delay, delay );
+
+			setupNotification();
+
+		} catch (Exception e) {
+			Log.e( TAG, "TimelapseService::setView: " + e.toString() );
+			cleanup();
+		}
+	}
+
+
+	// cleanup all resources
+	public void cleanup() {
+
+		// Cancel the persistent notification.
+		mNM.cancel( R.drawable.camera_tiny );
+
+		// stop the timer
+		myLoop.cancel();
+
+		// cleanup the camera
+		cam.stopPreview();
+	}
+
+
+	// initialize camera
+	private void setupCamera( SurfaceView sv ) {
+
+		Log.v( TAG, "Surfaceview: " + sv.toString() );
+
+		Camera.Parameters param = cam.getParameters();
+		param.setPreviewFormat( PixelFormat.YCbCr_420_SP );
+		param.setPreviewSize( 640, 480 );
+		cam.setParameters( param );
+
+		try {
+			cam.setPreviewDisplay( sv.getHolder() );
+			cam.startPreview();
+		} catch (Exception e) {
+			throw new RuntimeException( e.toString() );
+		}
+	}
+
+
+	// initialize output directory
+	private void setupOutdir() {
+
+		Time now = new Time();
+		now.set( System.currentTimeMillis() );
+
+		outdir = "/sdcard/floe.timelapse/" + now.format("%Y%m%d-%H%M/");
+		File tmp = new File(outdir);
+
+		if ((tmp.isDirectory() == false) && (tmp.mkdirs() == false)) {
+			Toast.makeText( this, "Error creating output directory - SD card not mounted?", Toast.LENGTH_SHORT ).show();
+			throw new RuntimeException( "Error creating output directory." );
+		}
+	}
+
+
+	// initialize the persistent notification
+	public void setupNotification() {
 
 		Toast.makeText(this, "Timelapse service started", Toast.LENGTH_SHORT).show();
 
@@ -137,72 +217,11 @@ public class TimelapseService extends Service {
 		// The PendingIntent to launch our activity if the user selects this notification
 		contentIntent = PendingIntent.getActivity(this, 0, new Intent(TimelapseService.this, Timelapse.class), 0);
 
-		showNotification( "Images: 0" );
+		updateNotification( "Images: 0" );
 	}
 
-
-	// called when service quits
-	@Override public void onDestroy() {
-
-		// Tell the user we stopped.
-		Toast.makeText(this, "Timelapse service stopped", Toast.LENGTH_SHORT).show();
-
-		// Cancel the persistent notification.
-		mNM.cancel( R.drawable.camera_tiny );
-
-		// stop the timer
-		myLoop.cancel();
-
-		// cleanup the camera
-		cam.stopPreview();
-		cam.release();
-	}
-
-
-	// after service has been started, this is called from the Activity to set the preview surface and launch the timer task
-	public void launch( SurfaceView sv, int delay ) {
-
-		try {
-
-			Log.v( TAG, "Surfaceview: " + sv.toString() );
-
-			Camera.Parameters param = cam.getParameters();
-			param.setPreviewFormat( PixelFormat.YCbCr_420_SP );
-			param.setPreviewSize( 640, 480 );
-			cam.setParameters( param );
-
-			cam.setPreviewDisplay( sv.getHolder() );
-			cam.startPreview();
-
-			if (setupOutdir() == false) return;
-			timer.scheduleAtFixedRate( myLoop, delay, delay );
-
-		} catch (Exception e) {
-			Log.e( TAG, "TimelapseService::setView: " + e.toString() );
-		}
-	}
-
-
-	// initialize output directory
-	private boolean setupOutdir() {
-
-		Time now = new Time();
-		now.set( System.currentTimeMillis() );
-
-		outdir = "/sdcard/floe.timelapse/" + now.format("%Y%m%d-%H%M/");
-		File tmp = new File(outdir);
-
-		if ((tmp.isDirectory() == false) && (tmp.mkdirs() == false)) {
-			Toast.makeText( this, "Error creating output directory - SD card not mounted?", Toast.LENGTH_SHORT ).show();
-			return false;
-		}
-
-		return true;
-	}
-
-
-	// put up a persistent notification icon for this service
-	private void showNotification( CharSequence text ) {
+	// update persistent notification
+	private void updateNotification( CharSequence text ) {
 
 		// Set the info for the views that show in the notification panel.
 		notification.setLatestEventInfo( TimelapseService.this, "Timelapse Image Service", text, contentIntent );
