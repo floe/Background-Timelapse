@@ -36,19 +36,21 @@ public class TimelapseService extends Service {
 	private Notification notification;
 	private PendingIntent contentIntent;
 
-	private String TAG;
-	private Timer timer = null;
+	private final String TAG = "TimelapseService";
+
 	private int counter;
 	private Camera cam;
 	private String outdir;
 
+	private Timer timer = null;
+	private TimelapseTask task = null;
 
 	// preview callback with actual image data
 	private Camera.PreviewCallback imageCallback = new Camera.PreviewCallback() {
 
 		@Override public void onPreviewFrame( byte[] _data, Camera _camera ) {
 
-			Log.v( TAG, "picture retrieved, storing.." );
+			Log.v( TAG, "::imageCallback: picture retrieved, storing.." );
 			//String myname = outdir.concat("img").concat(String.valueOf(counter++)).concat(".yuv");
 			String myname = outdir.concat("img").concat(String.format("%06d",counter++)).concat(".yuv");
 
@@ -62,10 +64,10 @@ public class TimelapseService extends Service {
 				CharSequence text = "Images: ".concat(String.format("%d",counter));
 				updateNotification( text );
 
-				Log.v( TAG, "picture stored successfully as " + myname );
+				Log.v( TAG, "::imageCallback: picture stored successfully as " + myname );
 
 			} catch (Exception e) {
-				Log.e( TAG, "TimelapseService::imageCallback: " + e.toString() );
+				Log.e( TAG, "::imageCallback: ", e );
 			}
 		}
 	};
@@ -84,7 +86,7 @@ public class TimelapseService extends Service {
 
 
 	// Timer task for continuous triggering of preview callbacks
-	private TimerTask myLoop = new TimerTask() {
+	private class TimelapseTask extends TimerTask {
 		@Override public void run() {
 			//Log.v( TAG, "starting autofocus" );
 			//cam.autoFocus( afCallback );
@@ -92,7 +94,7 @@ public class TimelapseService extends Service {
 			//cam.takePicture( null, null, imageCallback );
 			cam.setOneShotPreviewCallback( imageCallback );
 		}
-	};
+	}
 
 
 	// Binder class for activity <-> service interface
@@ -112,16 +114,14 @@ public class TimelapseService extends Service {
 	// called when service gets created
 	@Override public void onCreate() {
 
-		TAG = "Timelapse";
 		mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-		timer = new Timer("TimelapseService");
 
 		try {
 			cam = Camera.open();
 			Toast.makeText(this, "Timelapse service loaded", Toast.LENGTH_SHORT).show();
 		} catch (Exception e) {
-			Log.e( TAG, "TimelapseService::onCreate: " + e.toString() );
-			Toast.makeText(this, "Timelapse service error (camera problem?)", Toast.LENGTH_SHORT).show();
+			Log.e( TAG, "::onCreate: ", e );
+			Toast.makeText(this, TAG + " error (camera problem?)", Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -129,7 +129,7 @@ public class TimelapseService extends Service {
 	@Override public void onDestroy() {
 
 		// Tell the user we stopped.
-		Toast.makeText(this, "Timelapse service stopped", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, TAG + " stopped", Toast.LENGTH_SHORT).show();
 
 		// cleanup everything
 		cleanup();
@@ -142,15 +142,22 @@ public class TimelapseService extends Service {
 
 		try {
 
+			if (timer != null) {
+				Log.e( TAG, "::launch: already running." );
+				return;
+			}
+
 			setupCamera( sv );
 			setupOutdir();
 
-			timer.scheduleAtFixedRate( myLoop, delay, delay );
+			timer = new Timer();
+			task = new TimelapseTask();
+			timer.scheduleAtFixedRate( task, delay, delay );
 
 			setupNotification();
 
 		} catch (Exception e) {
-			Log.e( TAG, "TimelapseService::setView: " + e.toString() );
+			Log.e( TAG, "::launch: ", e );
 			cleanup();
 		}
 	}
@@ -163,7 +170,11 @@ public class TimelapseService extends Service {
 		mNM.cancel( R.drawable.camera_tiny );
 
 		// stop the timer
-		myLoop.cancel();
+		if (timer != null) {
+			timer.cancel();
+			timer = null;
+			task = null;
+		}
 
 		// cleanup the camera
 		cam.stopPreview();
@@ -173,7 +184,7 @@ public class TimelapseService extends Service {
 	// initialize camera
 	private void setupCamera( SurfaceView sv ) {
 
-		Log.v( TAG, "Surfaceview: " + sv.toString() );
+		Log.v( TAG, "::setupCamera: " + sv.toString() );
 
 		Camera.Parameters param = cam.getParameters();
 		param.setPreviewFormat( PixelFormat.YCbCr_420_SP );
@@ -208,10 +219,10 @@ public class TimelapseService extends Service {
 	// initialize the persistent notification
 	public void setupNotification() {
 
-		Toast.makeText(this, "Timelapse service started", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, TAG + " started", Toast.LENGTH_SHORT).show();
 
 		// Display a notification about us starting.  We put an icon in the status bar.
-		notification = new Notification( R.drawable.camera_tiny, "Timelapse Image Service started", System.currentTimeMillis() );
+		notification = new Notification( R.drawable.camera_tiny, TAG + " started", System.currentTimeMillis() );
 		notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_ONLY_ALERT_ONCE;
 
 		// The PendingIntent to launch our activity if the user selects this notification
