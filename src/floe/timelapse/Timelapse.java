@@ -14,6 +14,7 @@ import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -163,9 +164,8 @@ public class Timelapse extends Activity {
 				return;
 			}
 
-			pd = ProgressDialog.show( Timelapse.this, "Converting..", "", true, false );
-
-			new Thread() {
+			class ConverterThread extends Thread {
+				public boolean quit = false;
 				public void run() {
 					try {
 
@@ -187,6 +187,8 @@ public class Timelapse extends Activity {
 							Log.v( TAG, "::convert: got " + curfilenum + " files" );
 
 							for (File curfile: contents) {
+
+								if (quit) return;
 
 								String msg = "" + curfilenum-- + " images left in folder " + curdirnum + " of " + subdirs.length;
 								updateProgress(msg);
@@ -211,7 +213,19 @@ public class Timelapse extends Activity {
 					}
 					pd.dismiss();
 				}
-			}.start();
+			}
+
+			final ConverterThread converter = new ConverterThread();
+
+			OnCancelListener cancel = new OnCancelListener() {
+				public void onCancel( DialogInterface d ) {
+					converter.quit = true;
+				}
+			};
+
+			pd = ProgressDialog.show( Timelapse.this, "Converting..", "", true, true, cancel );
+
+			converter.start();
 		}
 	};
 
