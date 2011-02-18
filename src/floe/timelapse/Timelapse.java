@@ -74,7 +74,8 @@ public class Timelapse extends Activity {
 		sh.setType( SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS );
 		//sh.setFormat( PixelFormat.JPEG );
 
-		myIntent = new Intent( Timelapse.this, TimelapseService.class );
+		// bind to the service, starting it when not yet running
+		myIntent = new Intent( this, TimelapseService.class );
 		bindService( myIntent, mConnection, Context.BIND_AUTO_CREATE );
 	}
 
@@ -96,10 +97,7 @@ public class Timelapse extends Activity {
 			// service that we know is running in our own process, we can
 			// cast its IBinder to a concrete class and directly access it.
 			mBoundService = ((TimelapseService.TimelapseBinder)service).getService();
-
-			// Tell the user about this for our demo.
 			Toast.makeText( Timelapse.this, "Connected to timelapse service.", Toast.LENGTH_SHORT ).show();
-			//Toast.makeText(Timelapse.this, getFilesDir().getAbsolutePath(), Toast.LENGTH_SHORT).show();
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
@@ -126,11 +124,8 @@ public class Timelapse extends Activity {
 
 	private OnClickListener mBindListener = new OnClickListener() {
 		public void onClick(View v) {
-
-			// Establish a connection with the service.  We use an explicit
-			// class name because we want a specific service implementation that
-			// we know will be running in our own process (and thus won't be
-			// supporting component replacement by other applications).
+			// mark the service as started - will not be
+			// killed now, even if the connection is closed
 			startService( myIntent );
 			mBoundService.launch( sv, getDelay() );
 		}
@@ -139,8 +134,8 @@ public class Timelapse extends Activity {
 	private OnClickListener mUnbindListener = new OnClickListener() {
 		public void onClick(View v) {
 			try {
-				// Detach our existing connection.
-				//unbindService( mConnection );
+				// stop the service again - now will be
+				// terminated once the connection closes.
 				mBoundService.cleanup();
 				stopService( myIntent );
 			} catch (IllegalArgumentException e) { }
@@ -151,7 +146,7 @@ public class Timelapse extends Activity {
 		public void onClick( View v ) {
 
 			if (mBoundService.isRunning()) {
-				Toast.makeText( Timelapse.this, "Please stop image service first", Toast.LENGTH_SHORT).show();
+				Toast.makeText( Timelapse.this, "Please stop image service first.", Toast.LENGTH_SHORT ).show();
 				return;
 			}
 
