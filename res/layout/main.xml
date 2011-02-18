@@ -10,9 +10,9 @@
 	android:layout_height="fill_parent">
 
 	<TableRow android:gravity="center">
-		<Button android:id="@+id/bind"
+		<Button android:id="@+id/start"
 			android:layout_width="fill_parent" android:layout_height="wrap_content" 
-			android:text="Launch/Connect">
+			android:text="Start">
 			<requestFocus />
 		</Button>
 		<Button android:id="@+id/convert"
@@ -28,7 +28,7 @@
 	</TableRow>
 
 	<TableRow>
-		<Button android:id="@+id/unbind"
+		<Button android:id="@+id/stop"
 				android:layout_width="fill_parent" android:layout_height="wrap_content" 
 				android:text="Stop">
 		</Button>

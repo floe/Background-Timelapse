@@ -57,10 +57,10 @@ public class Timelapse extends Activity {
 		myIntent = new Intent(Timelapse.this, TimelapseService.class);
 
 		// Watch for button clicks.
-		Button button = (Button)findViewById(R.id.bind);
+		Button button = (Button)findViewById( R.id.start );
 		button.setOnClickListener(mBindListener);
 
-		button = (Button)findViewById(R.id.unbind);
+		button = (Button)findViewById( R.id.stop );
 		button.setOnClickListener(mUnbindListener);
 
 		button = (Button)findViewById(R.id.convert);
@@ -74,7 +74,17 @@ public class Timelapse extends Activity {
 		SurfaceHolder sh = sv.getHolder();
 		sh.setType( SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS );
 		//sh.setFormat( PixelFormat.JPEG );
+
+		bindService( myIntent, mConnection, Context.BIND_AUTO_CREATE );
 	}
+
+	@Override protected void onDestroy() {
+		try {
+			unbindService(mConnection);
+		} catch (Exception e) { }
+		super.onDestroy();
+	}
+
 
 	private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -86,17 +96,6 @@ public class Timelapse extends Activity {
 			// service that we know is running in our own process, we can
 			// cast its IBinder to a concrete class and directly access it.
 			mBoundService = ((TimelapseService.TimelapseBinder)service).getService();
-
-			int mydelay = 1000;
-			String delaytext = ((EditText)findViewById(R.id.delay)).getText().toString();
-			try {
-				mydelay = Integer.decode(delaytext);
-			} catch (Exception e) { }
-			if (mydelay < 1000) mydelay = 1000;
-
-			mBoundService.setOutdir( outdir );
-			mBoundService.startTimer( mydelay );
-			mBoundService.setView( sv );
 
 			// Tell the user about this for our demo.
 			Toast.makeText(Timelapse.this, "Connected to image service", Toast.LENGTH_SHORT).show();
@@ -126,24 +125,33 @@ public class Timelapse extends Activity {
 				return;
 			}
 
+			int mydelay = 1000;
+			String delaytext = ((EditText)findViewById(R.id.delay)).getText().toString();
+			try {
+				mydelay = Integer.decode(delaytext);
+			} catch (Exception e) { }
+			if (mydelay < 1000) mydelay = 1000;
+
+			mBoundService.setOutdir( outdir );
+			mBoundService.startTimer( mydelay );
+			mBoundService.setView( sv );
+
 			// Establish a connection with the service.  We use an explicit
 			// class name because we want a specific service implementation that
 			// we know will be running in our own process (and thus won't be
 			// supporting component replacement by other applications).
 			startService( myIntent );
-			bindService( myIntent, mConnection, Context.BIND_AUTO_CREATE );
+			//bindService( myIntent, mConnection, Context.BIND_AUTO_CREATE );
 			mIsBound = true;
 		}
 	};
 
 	private OnClickListener mUnbindListener = new OnClickListener() {
 		public void onClick(View v) {
-			if (mIsBound) {
 				// Detach our existing connection.
 				unbindService(mConnection);
-				stopService( myIntent );
 				mIsBound = false;
-			}
+			stopService( myIntent );
 		}
 	};
 

@@ -109,18 +109,26 @@ public class TimelapseService extends Service {
 	}
 
 
-	// called when service gets started
+	// called when service gets created
 	@Override public void onCreate() {
 
 		TAG = "Timelapse";
-
+		mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		timer = new Timer("TimelapseService");
+	
 		try {
+			cam = Camera.open();
+			Toast.makeText(this, "Timelapse service loaded", Toast.LENGTH_SHORT).show();
+		} catch (Exception e) {
+			Log.e( TAG, "TimelapseService::onCreate: " + e.toString() );
+			Toast.makeText(this, "Timelapse service error (camera problem?)", Toast.LENGTH_SHORT).show();
+		}
+	}
 
-		cam = Camera.open();
+	// called when service gets started
+	@Override public void onStart( Intent i, int id ) {
 
 		Toast.makeText(this, "Timelapse service started", Toast.LENGTH_SHORT).show();
-
-		mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
 		// Display a notification about us starting.  We put an icon in the status bar.
 		notification = new Notification( R.drawable.camera_tiny, "Timelapse Image Service started", System.currentTimeMillis() );
@@ -130,11 +138,6 @@ public class TimelapseService extends Service {
 		contentIntent = PendingIntent.getActivity(this, 0, new Intent(TimelapseService.this, Timelapse.class), 0);
 
 		showNotification( "Images: 0" );
-
-		} catch (Exception e) {
-			Log.e( TAG, "TimelapseService::onCreate: " + e.toString() );
-			Toast.makeText(this, "Timelapse service error (camera problem?)", Toast.LENGTH_SHORT).show();
-		}
 	}
 
 
@@ -145,7 +148,7 @@ public class TimelapseService extends Service {
 		Toast.makeText(this, "Timelapse service stopped", Toast.LENGTH_SHORT).show();
 
 		// Cancel the persistent notification.
-		mNM.cancel(R.id.bind);
+		mNM.cancel( R.drawable.camera_tiny );
 
 		// stop the timer
 		timer.cancel();
@@ -179,8 +182,6 @@ public class TimelapseService extends Service {
 
 	// launch the timer
 	public void startTimer( int delay ) {
-		if (timer != null) return;
-		timer = new Timer("TimelapseService");
 		timer.scheduleAtFixedRate( myLoop, delay, delay );
 	}
 
@@ -196,7 +197,7 @@ public class TimelapseService extends Service {
 
 		// Send the notification.
 		// We use a layout id because it is a unique number.  We use it later to cancel.
-		mNM.notify(R.id.bind, notification);
+		mNM.notify( R.drawable.camera_tiny, notification );
 	}
 }
 
