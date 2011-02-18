@@ -54,7 +54,7 @@ public class TimelapseService extends Service {
 			//String myname = outdir.concat("img").concat(String.valueOf(counter++)).concat(".yuv");
 			String myname = outdir.concat("img").concat(String.format("%06d",counter++)).concat(".yuv");
 
-			// store JPEG data
+			// store YUV data
 			try {
 
 				FileOutputStream outfile = new FileOutputStream( myname );
@@ -90,7 +90,7 @@ public class TimelapseService extends Service {
 		@Override public void run() {
 			//Log.v( TAG, "starting autofocus" );
 			//cam.autoFocus( afCallback );
-			Log.v( TAG, "taking picture" );
+			Log.v( TAG, "triggering camera image callback" );
 			//cam.takePicture( null, null, imageCallback );
 			cam.setOneShotPreviewCallback( imageCallback );
 		}
@@ -118,7 +118,7 @@ public class TimelapseService extends Service {
 
 		try {
 			cam = Camera.open();
-			Toast.makeText(this, "Timelapse service loaded", Toast.LENGTH_SHORT).show();
+			Toast.makeText( this, TAG + " initialized", Toast.LENGTH_SHORT ).show();
 		} catch (Exception e) {
 			Log.e( TAG, "::onCreate: ", e );
 			Toast.makeText(this, TAG + " error (camera problem?)", Toast.LENGTH_SHORT).show();
@@ -128,12 +128,12 @@ public class TimelapseService extends Service {
 	// called when service quits
 	@Override public void onDestroy() {
 
-		// Tell the user we stopped.
-		Toast.makeText(this, TAG + " stopped", Toast.LENGTH_SHORT).show();
-
 		// cleanup everything
 		cleanup();
 		cam.release();
+
+		// Tell the user we stopped.
+		Toast.makeText( this, TAG + " terminated", Toast.LENGTH_SHORT ).show();
 	}
 
 
@@ -143,7 +143,7 @@ public class TimelapseService extends Service {
 		try {
 
 			if (isRunning()) {
-				Log.e( TAG, "::launch: already running." );
+				Log.w( TAG, "::launch: already running." );
 				return;
 			}
 
@@ -178,26 +178,23 @@ public class TimelapseService extends Service {
 			timer.cancel();
 			timer = null;
 			task = null;
+			Toast.makeText( this, TAG + " stopped", Toast.LENGTH_SHORT ).show();
 		}
 	}
 
 
 	// initialize camera
-	private void setupCamera( SurfaceView sv ) {
+	private void setupCamera( SurfaceView sv ) throws java.io.IOException {
 
-		Log.v( TAG, "::setupCamera: " + sv.toString() );
+		//Log.v( TAG, "::setupCamera: " + sv.toString() );
 
 		Camera.Parameters param = cam.getParameters();
 		param.setPreviewFormat( PixelFormat.YCbCr_420_SP );
 		param.setPreviewSize( 640, 480 );
 		cam.setParameters( param );
 
-		try {
-			cam.setPreviewDisplay( sv.getHolder() );
-			cam.startPreview();
-		} catch (Exception e) {
-			throw new RuntimeException( e.toString() );
-		}
+		cam.setPreviewDisplay( sv.getHolder() );
+		cam.startPreview();
 	}
 
 
@@ -211,8 +208,8 @@ public class TimelapseService extends Service {
 		File tmp = new File(outdir);
 
 		if ((tmp.isDirectory() == false) && (tmp.mkdirs() == false)) {
-			Toast.makeText( this, "Error creating output directory - SD card not mounted?", Toast.LENGTH_SHORT ).show();
-			throw new RuntimeException( "Error creating output directory." );
+			Toast.makeText( this, TAG + ": error creating output directory - SD card not mounted?", Toast.LENGTH_SHORT ).show();
+			throw new RuntimeException( "Error creating output directory " + outdir );
 		}
 
 		counter = 0;
@@ -222,14 +219,14 @@ public class TimelapseService extends Service {
 	// initialize the persistent notification
 	public void setupNotification() {
 
-		Toast.makeText(this, TAG + " started", Toast.LENGTH_SHORT).show();
+		Toast.makeText( this, TAG + " started", Toast.LENGTH_SHORT ).show();
 
 		// Display a notification about us starting.  We put an icon in the status bar.
 		notification = new Notification( R.drawable.camera_tiny, TAG + " started", System.currentTimeMillis() );
 		notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_ONLY_ALERT_ONCE;
 
 		// The PendingIntent to launch our activity if the user selects this notification
-		contentIntent = PendingIntent.getActivity(this, 0, new Intent(TimelapseService.this, Timelapse.class), 0);
+		contentIntent = PendingIntent.getActivity( this, 0, new Intent( this, Timelapse.class ), 0);
 
 		updateNotification( "Images: 0" );
 	}
@@ -238,7 +235,7 @@ public class TimelapseService extends Service {
 	private void updateNotification( CharSequence text ) {
 
 		// Set the info for the views that show in the notification panel.
-		notification.setLatestEventInfo( TimelapseService.this, "Timelapse Image Service", text, contentIntent );
+		notification.setLatestEventInfo( this, "Timelapse Image Service", text, contentIntent );
 
 		// Send the notification.
 		// We use a layout id because it is a unique number.  We use it later to cancel.
