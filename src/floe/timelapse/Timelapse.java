@@ -46,7 +46,6 @@ public class Timelapse extends Activity {
 	private SurfaceView sv;
 	private ProgressDialog pd;
 	private Handler ph = new Handler();
-	private String outdir;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -115,16 +114,6 @@ public class Timelapse extends Activity {
 	private OnClickListener mBindListener = new OnClickListener() {
 		public void onClick(View v) {
 
-			Time now = new Time();
-			now.set( System.currentTimeMillis() );
-
-			outdir = "/sdcard/floe.timelapse/" + now.format("%Y%m%d-%H%M/");
-			File tmp = new File(outdir);
-			if ((tmp.isDirectory() == false) && (tmp.mkdirs() == false)) {
-				Toast.makeText( Timelapse.this, "Error creating output directory - SD card not mounted?", Toast.LENGTH_SHORT ).show();
-				return;
-			}
-
 			int mydelay = 1000;
 			String delaytext = ((EditText)findViewById(R.id.delay)).getText().toString();
 			try {
@@ -132,7 +121,6 @@ public class Timelapse extends Activity {
 			} catch (Exception e) { }
 			if (mydelay < 1000) mydelay = 1000;
 
-			mBoundService.setOutdir( outdir );
 			mBoundService.startTimer( mydelay );
 			mBoundService.setView( sv );
 
@@ -148,10 +136,12 @@ public class Timelapse extends Activity {
 
 	private OnClickListener mUnbindListener = new OnClickListener() {
 		public void onClick(View v) {
+			try {
 				// Detach our existing connection.
-				unbindService(mConnection);
+				unbindService( mConnection );
 				mIsBound = false;
-			stopService( myIntent );
+				stopService( myIntent );
+			} catch (IllegalArgumentException e) { }
 		}
 	};
 

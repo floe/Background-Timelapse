@@ -114,8 +114,7 @@ public class TimelapseService extends Service {
 
 		TAG = "Timelapse";
 		mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-		timer = new Timer("TimelapseService");
-	
+
 		try {
 			cam = Camera.open();
 			Toast.makeText(this, "Timelapse service loaded", Toast.LENGTH_SHORT).show();
@@ -182,12 +181,29 @@ public class TimelapseService extends Service {
 
 	// launch the timer
 	public void startTimer( int delay ) {
+		if (setupOutdir() == false) return;
+		timer = new Timer("TimelapseService");
 		timer.scheduleAtFixedRate( myLoop, delay, delay );
 	}
 
-	public void setOutdir( String dir ) {
-		outdir = dir;
+
+	// initialize output directory
+	private boolean setupOutdir() {
+
+		Time now = new Time();
+		now.set( System.currentTimeMillis() );
+
+		outdir = "/sdcard/floe.timelapse/" + now.format("%Y%m%d-%H%M/");
+		File tmp = new File(outdir);
+
+		if ((tmp.isDirectory() == false) && (tmp.mkdirs() == false)) {
+			Toast.makeText( this, "Error creating output directory - SD card not mounted?", Toast.LENGTH_SHORT ).show();
+			return false;
+		}
+
+		return true;
 	}
+
 
 	// put up a persistent notification icon for this service
 	private void showNotification( CharSequence text ) {
