@@ -43,17 +43,16 @@ public class Timelapse extends Activity {
 	private boolean mIsBound = false;
 	private TimelapseService mBoundService;
 	private Intent myIntent;
+
 	private SurfaceView sv;
+
 	private ProgressDialog pd;
 	private Handler ph = new Handler();
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	@Override protected void onCreate( Bundle savedInstanceState ) {
+
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.main);
-
-		myIntent = new Intent(Timelapse.this, TimelapseService.class);
 
 		// Watch for button clicks.
 		Button button = (Button)findViewById( R.id.start );
@@ -74,6 +73,7 @@ public class Timelapse extends Activity {
 		sh.setType( SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS );
 		//sh.setFormat( PixelFormat.JPEG );
 
+		myIntent = new Intent( Timelapse.this, TimelapseService.class );
 		bindService( myIntent, mConnection, Context.BIND_AUTO_CREATE );
 	}
 
@@ -97,7 +97,7 @@ public class Timelapse extends Activity {
 			mBoundService = ((TimelapseService.TimelapseBinder)service).getService();
 
 			// Tell the user about this for our demo.
-			Toast.makeText(Timelapse.this, "Connected to image service", Toast.LENGTH_SHORT).show();
+			Toast.makeText( Timelapse.this, "Connected to timelapse service.", Toast.LENGTH_SHORT ).show();
 			//Toast.makeText(Timelapse.this, getFilesDir().getAbsolutePath(), Toast.LENGTH_SHORT).show();
 		}
 
@@ -107,7 +107,7 @@ public class Timelapse extends Activity {
 			// Because it is running in our same process, we should never
 			// see this happen.
 			mBoundService = null;
-			Toast.makeText(Timelapse.this, "Disconnected from image service", Toast.LENGTH_SHORT).show();
+			Toast.makeText(Timelapse.this, "Disconnected from timelapse service.", Toast.LENGTH_SHORT).show();
 		}
 	};
 
