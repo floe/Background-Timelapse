@@ -11,17 +11,16 @@
 
 	<TableRow android:gravity="center">
 		<Button android:id="@+id/start"
-			android:layout_width="fill_parent" android:layout_height="wrap_content" 
+			android:layout_weight="1" android:layout_width="0dip"
 			android:text="Start">
 			<requestFocus />
 		</Button>
 		<Button android:id="@+id/convert"
-			android:layout_width="fill_parent" android:layout_height="wrap_content" 
+			android:layout_weight="1" android:layout_width="0dip"
 			android:text="Convert All">
 		</Button>
 		<TextView	android:id="@+id/filler"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
+			android:layout_weight="1" android:layout_width="0dip"
 			android:gravity="center"
 			android:text="Delay (min.\n1000 ms)">
 		</TextView>
@@ -29,17 +28,16 @@
 
 	<TableRow>
 		<Button android:id="@+id/stop"
-				android:layout_width="fill_parent" android:layout_height="wrap_content" 
-				android:text="Stop">
+			android:layout_weight="1" android:layout_width="0dip"
+			android:text="Stop">
 		</Button>
 		<Button android:id="@+id/about"
-			android:layout_width="fill_parent" android:layout_height="wrap_content" 
+			android:layout_weight="1" android:layout_width="0dip"
 			android:text="About">
 		</Button>
 		<EditText
 			android:id="@+id/delay"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
+			android:layout_weight="1" android:layout_width="0dip"
 			android:numeric="integer"
 			android:text="1000">
 		</EditText>
