@@ -40,7 +40,6 @@ import android.text.format.Time;
 
 public class Timelapse extends Activity {
 
-	private boolean mIsBound = false;
 	private TimelapseService mBoundService;
 	private Intent myIntent;
 
@@ -48,6 +47,8 @@ public class Timelapse extends Activity {
 
 	private ProgressDialog pd;
 	private Handler ph = new Handler();
+
+	private final String TAG = "Timelapse";
 
 	@Override protected void onCreate( Bundle savedInstanceState ) {
 
@@ -149,7 +150,7 @@ public class Timelapse extends Activity {
 	private OnClickListener mConvertListener = new OnClickListener() {
 		public void onClick( View v ) {
 
-			if (mIsBound) {
+			if (mBoundService.isRunning()) {
 				Toast.makeText( Timelapse.this, "Please stop image service first", Toast.LENGTH_SHORT).show();
 				return;
 			}
@@ -173,7 +174,7 @@ public class Timelapse extends Activity {
 				public void run() {
 					try {
 
-						Log.v( "TL", "got " + subdirs.length + " directories" );
+						Log.v( TAG, "::convert: got " + subdirs.length + " directories" );
 
 						int curdirnum = 0;
 						int[] outbuf = new int[640*480];
@@ -182,10 +183,13 @@ public class Timelapse extends Activity {
 						for (File curdir: subdirs) {
 
 							File[] contents = curdir.listFiles(filter);
+							if (contents == null) continue;
+
 							int curfilenum = contents.length;
 							curdirnum++;
 
-							Log.v( "TL", "got " + curfilenum + " files" );
+							if (curfilenum <= 0) continue;
+							Log.v( TAG, "::convert: got " + curfilenum + " files" );
 
 							for (File curfile: contents) {
 
@@ -208,7 +212,7 @@ public class Timelapse extends Activity {
 							}
 						}
 					} catch (Exception e) {
-						Log.e( "TL", "convert: " + e.toString() );
+						Log.e( TAG, "::convert: ", e );
 					}
 					pd.dismiss();
 				}

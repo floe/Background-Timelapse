@@ -142,7 +142,7 @@ public class TimelapseService extends Service {
 
 		try {
 
-			if (timer != null) {
+			if (isRunning()) {
 				Log.e( TAG, "::launch: already running." );
 				return;
 			}
@@ -163,21 +163,22 @@ public class TimelapseService extends Service {
 	}
 
 
+
 	// cleanup all resources
 	public void cleanup() {
 
 		// Cancel the persistent notification.
 		mNM.cancel( R.drawable.camera_tiny );
 
+		// cleanup the camera
+		cam.stopPreview();
+
 		// stop the timer
-		if (timer != null) {
+		if (isRunning()) {
 			timer.cancel();
 			timer = null;
 			task = null;
 		}
-
-		// cleanup the camera
-		cam.stopPreview();
 	}
 
 
@@ -240,6 +241,12 @@ public class TimelapseService extends Service {
 		// Send the notification.
 		// We use a layout id because it is a unique number.  We use it later to cancel.
 		mNM.notify( R.drawable.camera_tiny, notification );
+	}
+
+
+	// helper function to check state
+	public boolean isRunning() {
+		return (timer != null);
 	}
 }
 
