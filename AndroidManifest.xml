@@ -3,7 +3,7 @@
       package="floe.timelapse"
       android:versionCode="2"
       android:versionName="0.2">
-    <application android:label="@string/app_name" android:debuggable="true" android:icon="@drawable/stopwatch">
+    <application android:label="@string/app_name" android:debuggable="true" android:icon="@drawable/speedclock">
         <service android:name=".TimelapseService" />
         <activity android:name=".Timelapse"
                   android:launchMode="singleInstance"
