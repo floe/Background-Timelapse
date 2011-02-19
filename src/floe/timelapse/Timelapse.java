@@ -249,7 +249,7 @@ public class Timelapse extends Activity {
 
 	private OnClickListener mAboutListener = new OnClickListener() {
 		public void onClick( View v ) {
-			String msg = "Timelapse 0.2\n(c) 2011 by floe@butterbrot.org\n\nContinously captures images in the background for timelapse videos.\n\nStart: start the capture service\nStop: shut down the service\nConvert All: transform temporary images to PNGs (warning: slow!)\nAbout: this cruft\nDelay: milliseconds between captures";
+			String msg = "Background Timelapse 0.2\n(c) 2011 by floe@butterbrot.org\n\nContinously captures VGA images in the background for timelapse videos.\n\nStart: start the capture service\nStop: shut down the service\nConvert All: transform temporary images to PNGs (warning: slow!)\nAbout: this cruft\nDelay: milliseconds between captures";
 			new AlertDialog.Builder( Timelapse.this )
 				.setMessage(msg)
 				.setPositiveButton( "Close", new DialogInterface.OnClickListener() { public void onClick(DialogInterface dialog, int id) { dialog.cancel(); }})
