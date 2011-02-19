@@ -43,6 +43,21 @@
 		</EditText>
 	</TableRow>
 
+	<TableRow>
+		<TextView
+			android:id="@+id/caption"
+			android:layout_weight="1" android:layout_width="0dip"
+			android:gravity="right"
+			android:text="Timelapse service: ">
+		</TextView>
+		<TextView
+			android:id="@+id/status"
+			android:layout_weight="1" android:layout_width="0dip"
+			android:gravity="left"
+			android:text="not running">
+		</TextView>
+	</TableRow>
+
 	<SurfaceView
 		android:id="@+id/view"
 		android:layout_width="fill_parent"

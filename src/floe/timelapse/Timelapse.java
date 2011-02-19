@@ -34,6 +34,7 @@ import android.view.SurfaceHolder;
 import android.view.View.OnClickListener;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
@@ -104,7 +105,8 @@ public class Timelapse extends Activity {
 			// service that we know is running in our own process, we can
 			// cast its IBinder to a concrete class and directly access it.
 			mBoundService = ((TimelapseService.TimelapseBinder)service).getService();
-			Toast.makeText( Timelapse.this, "Connected to timelapse service.", Toast.LENGTH_SHORT ).show();
+			//Toast.makeText( Timelapse.this, "Connected to timelapse service.", Toast.LENGTH_SHORT ).show();
+			((TextView)findViewById( R.id.status )).setText( mBoundService.isRunning() ? "running" : "stopped" );
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
@@ -114,6 +116,7 @@ public class Timelapse extends Activity {
 			// see this happen.
 			mBoundService = null;
 			Toast.makeText(Timelapse.this, "Disconnected from timelapse service.", Toast.LENGTH_SHORT).show();
+			((TextView)findViewById( R.id.status )).setText( "terminated" );
 		}
 	};
 
@@ -135,6 +138,7 @@ public class Timelapse extends Activity {
 			// killed now, even if the connection is closed
 			startService( myIntent );
 			mBoundService.launch( sv, getDelay() );
+			((TextView)findViewById( R.id.status )).setText( "running" );
 		}
 	};
 
@@ -145,6 +149,7 @@ public class Timelapse extends Activity {
 				// terminated once the connection closes.
 				mBoundService.cleanup();
 				stopService( myIntent );
+				((TextView)findViewById( R.id.status )).setText( "stopped" );
 			} catch (IllegalArgumentException e) { }
 		}
 	};
