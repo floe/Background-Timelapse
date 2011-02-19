@@ -19,6 +19,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.FileInputStream;
@@ -30,9 +31,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
+import android.view.View.OnClickListener;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
-import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
@@ -86,6 +87,11 @@ public class Timelapse extends Activity {
 		} catch (Exception e) { }
 		super.onDestroy();
 	}
+
+	// should catch config changes, esp. screen rotation
+	/* @Override public void onConfigurationChanged( Configuration newConfig ) {
+		setContentView( R.layout.main );
+	} */
 
 
 	private ServiceConnection mConnection = new ServiceConnection() {
