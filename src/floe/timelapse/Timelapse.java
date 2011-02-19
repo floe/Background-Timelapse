@@ -89,10 +89,13 @@ public class Timelapse extends Activity {
 		super.onDestroy();
 	}
 
-	// should catch config changes, esp. screen rotation
-	/* @Override public void onConfigurationChanged( Configuration newConfig ) {
-		setContentView( R.layout.main );
-	} */
+	// catch & ignore config changes: screen rotation/keyboard slide
+	// FIXME: this is a hack, the proper solution is MUCH more complicated - see:
+	// https://github.com/commonsguy/cw-android/blob/master/Rotation/RotationAsync/src/com/commonsware/android/rotation/async/RotationAsync.java
+	@Override public void onConfigurationChanged( Configuration newConfig ) {
+		// just call the default method
+		super.onConfigurationChanged( newConfig );
+	}
 
 
 	private ServiceConnection mConnection = new ServiceConnection() {
