@@ -20,12 +20,15 @@ import android.os.Looper;
 import android.widget.Toast;
 import java.util.TimerTask;
 import java.util.Timer;
+import java.util.List;
 import java.lang.Thread;
 import java.lang.String;
 import android.hardware.Camera;
 import android.graphics.PixelFormat;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.BufferedOutputStream;
+import java.util.zip.GZIPOutputStream;
 import android.util.Log;
 import android.text.format.Time;
 
@@ -52,12 +55,12 @@ public class TimelapseService extends Service {
 
 			Log.v( TAG, "::imageCallback: picture retrieved, storing.." );
 			//String myname = outdir.concat("img").concat(String.valueOf(counter++)).concat(".yuv");
-			String myname = outdir.concat("img").concat(String.format("%06d",counter++)).concat(".yuv");
+			String myname = outdir.concat("img").concat(String.format("%06d",counter++)).concat(".yuv.gz");
 
 			// store YUV data
 			try {
 
-				FileOutputStream outfile = new FileOutputStream( myname );
+				GZIPOutputStream outfile = new GZIPOutputStream( new BufferedOutputStream(new FileOutputStream( myname )) );
 				outfile.write( _data );
 				outfile.close();
 
@@ -189,8 +192,13 @@ public class TimelapseService extends Service {
 		//Log.v( TAG, "::setupCamera: " + sv.toString() );
 
 		Camera.Parameters param = cam.getParameters();
+		List<Camera.Size> pvsizes = param.getSupportedPreviewSizes();
+		int len = pvsizes.size();
+		for (int i = 0; i < len; i++)
+			Log.v( TAG, "camera preview format: "+pvsizes.get(i).width+"x"+pvsizes.get(i).height );
 		param.setPreviewFormat( PixelFormat.YCbCr_420_SP );
-		param.setPreviewSize( 640, 480 );
+		//param.setPreviewSize( pvsizes.get(len-1).width, pvsizes.get(len-1).height );
+		param.setPreviewSize( 1280, 720 );
 		cam.setParameters( param );
 
 		cam.setPreviewDisplay( sv.getHolder() );
