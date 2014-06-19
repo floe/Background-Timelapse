@@ -24,6 +24,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.util.zip.GZIPInputStream;
 import android.os.Handler;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -169,7 +172,7 @@ public class Timelapse extends Activity {
 			final File[] subdirs = outdir.listFiles();
 			final FilenameFilter filter = new FilenameFilter() {
 				public boolean accept( File dir, String name ) {
-					return name.endsWith(".yuv");
+					return name.endsWith(".yuv.gz");
 				}
 			};
 
@@ -207,17 +210,17 @@ public class Timelapse extends Activity {
 								String msg = "" + curfilenum-- + " images left in folder " + curdirnum + " of " + subdirs.length;
 								updateProgress(msg);
 
-								File outpath = new File( curfile.getAbsolutePath().replace(".yuv",".png") );
+								File outpath = new File( curfile.getAbsolutePath().replace(".yuv.gz",".png") );
 								if (outpath.exists()) continue;
 
-								FileInputStream infile = new FileInputStream( curfile );
+								GZIPInputStream infile = new GZIPInputStream( new BufferedInputStream( new FileInputStream( curfile )));
 								infile.read( inbuf );
 								infile.close();
 
 								decodeYUV420SP( outbuf, inbuf, 1280, 720 );
 								Bitmap result = Bitmap.createBitmap( outbuf, 1280, 720, Bitmap.Config.ARGB_8888 );
 
-								FileOutputStream outfile = new FileOutputStream( outpath );
+								BufferedOutputStream outfile = new BufferedOutputStream( new FileOutputStream( outpath ));
 								result.compress( Bitmap.CompressFormat.PNG, 100, outfile );
 								outfile.close();
 							}
