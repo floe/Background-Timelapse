@@ -1,4 +1,5 @@
 bin
 ext/convert
+ext/convert_cv
 gen
 android-release.keystore
