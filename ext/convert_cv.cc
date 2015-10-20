@@ -26,8 +26,10 @@ int main(int argc, char* argv[]) {
 	Mat mYuv(h + h/2, w, CV_8UC1, buffer);
   Mat mRgba(h,w,CV_8UC4,outbuf);
   cvtColor( mYuv, mRgba, CV_YUV2BGR_NV21 );
+  Mat result(h,w,CV_8UC4);
+  cv::flip(mRgba.t(),result,1);
 
-  imwrite(argv[2],mRgba);
+  imwrite(argv[2],result);
 
   return 0;
 }
