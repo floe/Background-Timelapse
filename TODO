@@ -1,13 +1,9 @@
 planned features:
 
 0.3:
-	- NDK support, native YUV -> RGB conversion routine
-	- alternative: direct JPEG support?
-	- adjustable resolution
+	- fix rotation issues
+	- fix TL in background not working
 
 0.4:
-	- motion detection support
-	- option to hide notification
-
-0.5:
+	- adjustable resolution
 	- native video generation?
