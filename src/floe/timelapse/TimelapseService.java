@@ -25,6 +25,9 @@ import java.lang.Thread;
 import java.lang.String;
 import android.hardware.Camera;
 import android.graphics.PixelFormat;
+import android.graphics.ImageFormat;
+import android.graphics.YuvImage;
+import android.graphics.Rect;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.BufferedOutputStream;
@@ -53,16 +56,20 @@ public class TimelapseService extends Service {
 
 		@Override public void onPreviewFrame( byte[] _data, Camera _camera ) {
 
-			Log.v( TAG, "::imageCallback: picture retrieved, storing.." );
+			int width = 1280;
+			int height = 720;
+
+			Log.v( TAG, "::imageCallback: picture retrieved ("+_data.length+" bytes), storing.." );
 			//String myname = outdir.concat("img").concat(String.valueOf(counter++)).concat(".yuv");
-			String myname = outdir.concat("img").concat(String.format("%06d",counter++)).concat(".yuv.gz");
+			String myname = outdir.concat("img").concat(String.format("%06d",counter++)).concat(".jpg");
 
 			// store YUV data
 			try {
 
-				GZIPOutputStream outfile = new GZIPOutputStream( new BufferedOutputStream(new FileOutputStream( myname )) );
-				outfile.write( _data );
-				outfile.close();
+				FileOutputStream fos = new FileOutputStream(myname);
+				YuvImage yuvImage = new YuvImage( _data, ImageFormat.NV21, width, height, null);
+				yuvImage.compressToJpeg(new Rect(0, 0, width, height), 100, fos);
+				fos.close();
 
 				CharSequence text = "Images: ".concat(String.format("%d",counter));
 				updateNotification( text );
@@ -196,7 +203,7 @@ public class TimelapseService extends Service {
 		int len = pvsizes.size();
 		for (int i = 0; i < len; i++)
 			Log.v( TAG, "camera preview format: "+pvsizes.get(i).width+"x"+pvsizes.get(i).height );
-		param.setPreviewFormat( PixelFormat.YCbCr_420_SP );
+		param.setPreviewFormat( ImageFormat.NV21 );
 		//param.setPreviewSize( pvsizes.get(len-1).width, pvsizes.get(len-1).height );
 		param.setPreviewSize( 1280, 720 );
 		cam.setParameters( param );
