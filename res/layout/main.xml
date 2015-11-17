@@ -58,12 +58,12 @@
 		</TextView>
 	</TableRow>
 
-	<SurfaceView
+	<TextureView
 		android:id="@+id/view"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:layout_weight="1"
-		android:text="surface_view"
+		android:text="texture_view"
 	/>
 
 </TableLayout>

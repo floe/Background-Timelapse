@@ -32,8 +32,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.view.SurfaceView;
-import android.view.SurfaceHolder;
+import android.view.TextureView;
 import android.view.View.OnClickListener;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
@@ -49,7 +48,7 @@ public class Timelapse extends Activity {
 	private TimelapseService mBoundService;
 	private Intent myIntent;
 
-	private SurfaceView sv;
+	private TextureView tv;
 
 	private ProgressDialog pd;
 	private Handler ph = new Handler();
@@ -75,10 +74,7 @@ public class Timelapse extends Activity {
 		button.setOnClickListener(mAboutListener);
 
 		// setup the preview surface
-		sv = (SurfaceView)findViewById(R.id.view);
-		SurfaceHolder sh = sv.getHolder();
-		sh.setType( SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS );
-		//sh.setFormat( PixelFormat.JPEG );
+		tv = (TextureView)findViewById(R.id.view);
 
 		// bind to the service, starting it when not yet running
 		myIntent = new Intent( this, TimelapseService.class );
@@ -143,7 +139,7 @@ public class Timelapse extends Activity {
 			// mark the service as started - will not be
 			// killed now, even if the connection is closed
 			startService( myIntent );
-			mBoundService.launch( sv, getDelay() );
+			mBoundService.launch( tv, getDelay() );
 			((TextView)findViewById( R.id.status )).setText( "running" );
 		}
 	};

@@ -11,7 +11,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -148,7 +148,7 @@ public class TimelapseService extends Service {
 
 
 	// after service has been started, this is called from the Activity to set the preview surface and launch the timer task
-	public void launch( SurfaceView sv, int delay ) {
+	public void launch( TextureView tv, int delay ) {
 
 		try {
 
@@ -157,7 +157,7 @@ public class TimelapseService extends Service {
 				return;
 			}
 
-			setupCamera( sv );
+			setupCamera( tv );
 			setupOutdir();
 
 			timer = new Timer();
@@ -194,7 +194,7 @@ public class TimelapseService extends Service {
 
 
 	// initialize camera
-	private void setupCamera( SurfaceView sv ) throws java.io.IOException {
+	private void setupCamera( TextureView tv ) throws java.io.IOException {
 
 		//Log.v( TAG, "::setupCamera: " + sv.toString() );
 
@@ -208,7 +208,7 @@ public class TimelapseService extends Service {
 		param.setPreviewSize( 1280, 720 );
 		cam.setParameters( param );
 
-		cam.setPreviewDisplay( sv.getHolder() );
+		cam.setPreviewTexture( tv.getSurfaceTexture() );
 		cam.startPreview();
 	}
 
