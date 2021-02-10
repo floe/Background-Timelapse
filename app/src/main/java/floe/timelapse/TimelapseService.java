@@ -35,11 +35,14 @@ import java.util.zip.GZIPOutputStream;
 import android.util.Log;
 import android.text.format.Time;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 
 public class TimelapseService extends Service {
 
-	private NotificationManager mNM;
-	private Notification notification;
+	private NotificationManagerCompat mNM;
+	private NotificationCompat.Builder notification;
 	private PendingIntent contentIntent;
 
 	private final String TAG = "TimelapseService";
@@ -124,7 +127,7 @@ public class TimelapseService extends Service {
 	// called when service gets created
 	@Override public void onCreate() {
 
-		mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		mNM = NotificationManagerCompat.from(this);
 
 		try {
 			cam = Camera.open();
@@ -237,8 +240,9 @@ public class TimelapseService extends Service {
 		Toast.makeText( this, TAG + " started", Toast.LENGTH_SHORT ).show();
 
 		// Display a notification about us starting.  We put an icon in the status bar.
-		notification = new Notification( R.drawable.camera_tiny, TAG + " started", System.currentTimeMillis() );
-		notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_ONLY_ALERT_ONCE;
+		notification = new NotificationCompat.Builder(this, Integer.toString(R.drawable.camera_tiny));
+		notification.setContentTitle( TAG + " started" ); //, System.currentTimeMillis() );
+		notification.setOngoing(true); // flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_ONLY_ALERT_ONCE;
 
 		// The PendingIntent to launch our activity if the user selects this notification
 		contentIntent = PendingIntent.getActivity( this, 0, new Intent( this, Timelapse.class ), 0);
@@ -250,11 +254,11 @@ public class TimelapseService extends Service {
 	private void updateNotification( CharSequence text ) {
 
 		// Set the info for the views that show in the notification panel.
-		notification.setLatestEventInfo( this, "Timelapse Image Service", text, contentIntent );
+		notification.setContentTitle("Timelapse Image Service").setContentText(text).setContentIntent( contentIntent );
 
 		// Send the notification.
 		// We use a layout id because it is a unique number.  We use it later to cancel.
-		mNM.notify( R.drawable.camera_tiny, notification );
+		mNM.notify( R.drawable.camera_tiny, notification.build() );
 	}
 
 

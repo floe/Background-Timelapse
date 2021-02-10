@@ -19,6 +19,5 @@
 		<uses-permission android:name="android.permission.CAMERA"/>
 		<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 		<uses-feature android:name="android.hardware.camera" />
-		<uses-sdk android:minSdkVersion="4" />
-		<!--uses-feature android:name="android.hardware.camera.autofocus" /-->
+    <!--uses-feature android:name="android.hardware.camera.autofocus" /-->
 </manifest> 
