@@ -11,6 +11,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
+import android.os.Environment;
 import android.view.TextureView;
 import android.content.Intent;
 import android.os.Binder;
@@ -127,7 +128,7 @@ public class TimelapseService extends Service {
 	// called when service gets created
 	@Override public void onCreate() {
 
-		mNM = NotificationManagerCompat.from(this);
+		mNM = NotificationManagerCompat.from(this.getApplicationContext());
 
 		try {
 			cam = Camera.open();
@@ -181,7 +182,7 @@ public class TimelapseService extends Service {
 	public void cleanup() {
 
 		// Cancel the persistent notification.
-		mNM.cancel( R.drawable.camera_tiny );
+		mNM.cancel( 0xF10E );
 
 		// cleanup the camera
 		cam.stopPreview();
@@ -222,10 +223,10 @@ public class TimelapseService extends Service {
 		Time now = new Time();
 		now.set( System.currentTimeMillis() );
 
-		outdir = "/sdcard/floe.timelapse/" + now.format("%Y%m%d-%H%M%S/");
+		outdir = Environment.getExternalStorageDirectory().getPath() + "/floe.timelapse/" + now.format("%Y%m%d-%H%M%S/");
 		File tmp = new File(outdir);
 
-		if ((tmp.isDirectory() == false) && (tmp.mkdirs() == false)) {
+		if ((!tmp.isDirectory()) && (!tmp.mkdirs())) {
 			Toast.makeText( this, TAG + ": error creating output directory - SD card not mounted?", Toast.LENGTH_SHORT ).show();
 			throw new RuntimeException( "Error creating output directory " + outdir );
 		}
@@ -240,9 +241,12 @@ public class TimelapseService extends Service {
 		Toast.makeText( this, TAG + " started", Toast.LENGTH_SHORT ).show();
 
 		// Display a notification about us starting.  We put an icon in the status bar.
-		notification = new NotificationCompat.Builder(this, Integer.toString(R.drawable.camera_tiny));
+		notification = new NotificationCompat.Builder(this, "f10e");
 		notification.setContentTitle( TAG + " started" ); //, System.currentTimeMillis() );
 		notification.setOngoing(true); // flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_ONLY_ALERT_ONCE;
+		notification.setSmallIcon(R.drawable.ic_baseline_camera_enhance_24);
+		notification.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+		notification.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
 		// The PendingIntent to launch our activity if the user selects this notification
 		contentIntent = PendingIntent.getActivity( this, 0, new Intent( this, Timelapse.class ), 0);
@@ -258,7 +262,7 @@ public class TimelapseService extends Service {
 
 		// Send the notification.
 		// We use a layout id because it is a unique number.  We use it later to cancel.
-		mNM.notify( R.drawable.camera_tiny, notification.build() );
+		mNM.notify( 0xF10E, notification.build() );
 	}
 
 
