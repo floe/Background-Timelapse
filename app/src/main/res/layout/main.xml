@@ -2,7 +2,6 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/tableLayout"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
@@ -33,7 +32,7 @@
 		app:layout_constraintBottom_toTopOf="@+id/delay"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toEndOf="@id/about"
-		app:layout_constraintTop_toTopOf="parent"></TextView>
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<Button
 		android:id="@+id/stop"
@@ -43,7 +42,7 @@
 		app:layout_constraintBottom_toTopOf="@id/textView2"
 		app:layout_constraintEnd_toStartOf="@+id/about"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/start"></Button>
+		app:layout_constraintTop_toBottomOf="@+id/start" />
 
 	<Button
 		android:id="@+id/about"
@@ -53,7 +52,7 @@
 		app:layout_constraintBottom_toTopOf="@id/textView2"
 		app:layout_constraintEnd_toStartOf="@+id/delay"
 		app:layout_constraintStart_toEndOf="@id/stop"
-		app:layout_constraintTop_toTopOf="parent"></Button>
+		app:layout_constraintTop_toTopOf="parent" />
 
 	<EditText
 		android:id="@+id/delay"
@@ -67,7 +66,7 @@
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toEndOf="@id/about"
 		app:layout_constraintTop_toBottomOf="@id/textView"
-		app:layout_constraintVertical_bias="1.0"></EditText>
+		app:layout_constraintVertical_bias="1.0" />
 
 	<TextView
 		android:id="@+id/textView2"
@@ -78,7 +77,7 @@
 		app:layout_constraintBottom_toTopOf="@id/view"
 		app:layout_constraintEnd_toStartOf="@id/status"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@id/stop"></TextView>
+		app:layout_constraintTop_toBottomOf="@id/stop" />
 
 	<TextView
 		android:id="@+id/status"
@@ -89,7 +88,7 @@
 		app:layout_constraintBottom_toTopOf="@id/view"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toEndOf="@+id/textView2"
-		app:layout_constraintTop_toTopOf="@+id/textView2"></TextView>
+		app:layout_constraintTop_toTopOf="@+id/textView2" />
 
 
 	<TextureView

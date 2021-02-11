@@ -38,7 +38,7 @@ public class Timelapse extends Activity {
 
 	private TextureView tv;
 
-	private final String TAG = "Timelapse";
+	// --Commented out by Inspection (11/02/21 12:39):private final String TAG = "Timelapse";
 	private final int PERMISSION_REQUEST_CODE = 0x100;
 
 	@Override protected void onCreate( Bundle savedInstanceState ) {
@@ -88,7 +88,7 @@ public class Timelapse extends Activity {
 	@Override protected void onDestroy() {
 		try {
 			unbindService(mConnection);
-		} catch (Exception e) { }
+		} catch (Exception ignored) { }
 		super.onDestroy();
 	}
 
@@ -133,7 +133,7 @@ public class Timelapse extends Activity {
 		String delaytext = ((EditText)findViewById(R.id.delay)).getText().toString();
 		try {
 			mydelay = Integer.decode(delaytext);
-		} catch (Exception e) { }
+		} catch (NumberFormatException ignored) { }
 		if (mydelay < 1000) mydelay = 1000;
 		return mydelay;
 	}
@@ -156,7 +156,7 @@ public class Timelapse extends Activity {
 				mBoundService.cleanup();
 				stopService( myIntent );
 				((TextView)findViewById( R.id.status )).setText( "stopped" );
-			} catch (IllegalArgumentException e) { }
+			} catch (IllegalArgumentException ignored) { }
 		}
 	};
 
