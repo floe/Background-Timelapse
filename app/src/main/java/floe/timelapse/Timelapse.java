@@ -1,8 +1,8 @@
-/****************************************************************\
-*                Android Background Timelapse                    *
-* Copyright (c) 2009-10 by Florian Echtler <floe@butterbrot.org> *
-*  Licensed under GNU General Public License (GPL) 3 or later    *
-\****************************************************************/
+/*
+ *  Android Background Timelapse
+ *  Copyright (c) 2009-10 by Florian Echtler <floe@butterbrot.org>
+ *  Licensed under GNU General Public License (GPL) 3 or later
+*/
 
 package floe.timelapse;
 
@@ -95,13 +95,13 @@ public class Timelapse extends Activity {
 	// catch & ignore config changes: screen rotation/keyboard slide
 	// FIXME: this is a hack, the proper solution is MUCH more complicated - see:
 	// https://github.com/commonsguy/cw-android/blob/master/Rotation/RotationAsync/src/com/commonsware/android/rotation/async/RotationAsync.java
-	@Override public void onConfigurationChanged( Configuration newConfig ) {
+	@Override public void onConfigurationChanged( @NonNull Configuration newConfig ) {
 		// just call the default method
 		super.onConfigurationChanged( newConfig );
 	}
 
 
-	private ServiceConnection mConnection = new ServiceConnection() {
+	private final ServiceConnection mConnection = new ServiceConnection() {
 
 		public void onServiceConnected(ComponentName className, IBinder service) {
 
@@ -138,7 +138,7 @@ public class Timelapse extends Activity {
 		return mydelay;
 	}
 
-	private OnClickListener mBindListener = new OnClickListener() {
+	private final OnClickListener mBindListener = new OnClickListener() {
 		public void onClick(View v) {
 			// mark the service as started - will not be
 			// killed now, even if the connection is closed
@@ -148,7 +148,7 @@ public class Timelapse extends Activity {
 		}
 	};
 
-	private OnClickListener mUnbindListener = new OnClickListener() {
+	private final OnClickListener mUnbindListener = new OnClickListener() {
 		public void onClick(View v) {
 			try {
 				// stop the service again - now will be
@@ -160,7 +160,7 @@ public class Timelapse extends Activity {
 		}
 	};
 
-	private OnClickListener mAboutListener = new OnClickListener() {
+	private final OnClickListener mAboutListener = new OnClickListener() {
 		public void onClick( View v ) {
 			String msg = "Background Timelapse 0.3\n(c) 2021 by floe@butterbrot.org\n\nhttps://github.com/floe/background-timelapse\nContinously captures HD images in the background for timelapse videos.\n\nStart: start the capture service\nStop: shut down the service\nAbout: this cruft\nDelay: milliseconds between captures";
 			new AlertDialog.Builder( Timelapse.this )

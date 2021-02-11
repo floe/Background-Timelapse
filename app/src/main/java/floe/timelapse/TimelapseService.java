@@ -1,8 +1,8 @@
-/****************************************************************\
-*                Android Background Timelapse                    *
-* Copyright (c) 2009-10 by Florian Echtler <floe@butterbrot.org> *
-*  Licensed under GNU General Public License (GPL) 3 or later    *
-\****************************************************************/
+/*
+ *  Android Background Timelapse
+ *  Copyright (c) 2009-21 by Florian Echtler <floe@butterbrot.org>
+ *  Licensed under GNU General Public License (GPL) 3 or later
+*/
 
 package floe.timelapse;
 
@@ -53,7 +53,7 @@ public class TimelapseService extends Service {
 	private TimelapseTask task = null;
 
 	// preview callback with actual image data
-	private Camera.PreviewCallback imageCallback = new Camera.PreviewCallback() {
+	private final Camera.PreviewCallback imageCallback = new Camera.PreviewCallback() {
 
 		@Override public void onPreviewFrame( byte[] _data, Camera _camera ) {
 
