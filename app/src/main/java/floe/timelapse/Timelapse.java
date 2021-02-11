@@ -6,6 +6,7 @@
 
 package floe.timelapse;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -13,7 +14,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
@@ -24,6 +27,9 @@ import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+
 
 public class Timelapse extends Activity {
 
@@ -33,6 +39,7 @@ public class Timelapse extends Activity {
 	private TextureView tv;
 
 	private final String TAG = "Timelapse";
+	private final int PERMISSION_REQUEST_CODE = 0x100;
 
 	@Override protected void onCreate( Bundle savedInstanceState ) {
 
@@ -55,9 +62,30 @@ public class Timelapse extends Activity {
 		// setup the preview surface
 		tv = findViewById(R.id.view);
 
+		// check for camera/storage permission
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			if (checkSelfPermission(Manifest.permission.CAMERA)	                != PackageManager.PERMISSION_GRANTED ||
+			    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+				ActivityCompat.requestPermissions(this, new String[]{
+					Manifest.permission.CAMERA,
+					Manifest.permission.WRITE_EXTERNAL_STORAGE
+				}, PERMISSION_REQUEST_CODE);
+			}
+		}
+
 		// bind to the service, starting it when not yet running
 		myIntent = new Intent( this, TimelapseService.class );
 		bindService( myIntent, mConnection, Context.BIND_AUTO_CREATE );
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		if (requestCode == PERMISSION_REQUEST_CODE) {
+			// If request is cancelled, the result arrays are empty.
+			if (grantResults.length == 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+				Toast.makeText(Timelapse.this, "Unable to run without camera/storage permission.", Toast.LENGTH_LONG).show();
+			}
+		}
 	}
 
 	@Override protected void onDestroy() {
