@@ -1,71 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<TableLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:padding="4dip"
-	android:stretchColumns="1"
-	android:gravity="center_horizontal"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/tableLayout"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:layout_height="fill_parent"
+	android:gravity="center_horizontal">
 
-	<TableRow android:gravity="center">
-		<Button android:id="@+id/start"
-			android:layout_weight="1" android:layout_width="0dip"
-			android:text="Start">
-			<requestFocus />
-		</Button>
-		<Button android:id="@+id/convert"
-			android:layout_weight="1" android:layout_width="0dip"
-			android:text="Convert All">
-		</Button>
-		<TextView
-			android:layout_weight="1" android:layout_width="0dip"
-			android:gravity="center"
-			android:text="Delay (min.\n1000 ms)">
-		</TextView>
-	</TableRow>
+	<Button
+		android:id="@+id/start"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:text="Start"
+		app:layout_constraintBottom_toTopOf="@+id/stop"
+		app:layout_constraintEnd_toStartOf="@+id/about"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent">
 
-	<TableRow>
-		<Button android:id="@+id/stop"
-			android:layout_weight="1" android:layout_width="0dip"
-			android:text="Stop">
-		</Button>
-		<Button android:id="@+id/about"
-			android:layout_weight="1" android:layout_width="0dip"
-			android:text="About">
-		</Button>
-		<EditText
-			android:id="@+id/delay"
-			android:hint="delay in milliseconds"
-			android:layout_weight="1" android:layout_width="0dip"
-			android:inputType="number"
-			android:text="1000"
-			android:importantForAutofill="no">
-		</EditText>
-	</TableRow>
+		<requestFocus
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
+	</Button>
 
-	<TableRow>
-		<TextView
-			android:layout_weight="1" android:layout_width="0dip"
-			android:gravity="right"
-			android:text="Timelapse service: ">
-		</TextView>
-		<TextView
-			android:id="@+id/status"
-			android:layout_weight="1" android:layout_width="0dip"
-			android:gravity="left"
-			android:text="not running">
-		</TextView>
-	</TableRow>
+
+	<TextView
+		android:id="@+id/textView"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:text="Delay (min.\n1000 ms)"
+		app:layout_constraintBottom_toTopOf="@+id/delay"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toEndOf="@id/about"
+		app:layout_constraintTop_toTopOf="parent"></TextView>
+
+	<Button
+		android:id="@+id/stop"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:text="Stop"
+		app:layout_constraintBottom_toTopOf="@id/textView2"
+		app:layout_constraintEnd_toStartOf="@+id/about"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/start"></Button>
+
+	<Button
+		android:id="@+id/about"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
+		android:text="About"
+		app:layout_constraintBottom_toTopOf="@id/textView2"
+		app:layout_constraintEnd_toStartOf="@+id/delay"
+		app:layout_constraintStart_toEndOf="@id/stop"
+		app:layout_constraintTop_toTopOf="parent"></Button>
+
+	<EditText
+		android:id="@+id/delay"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:hint="delay in milliseconds"
+		android:importantForAutofill="no"
+		android:inputType="number"
+		android:text="1000"
+		app:layout_constraintBottom_toTopOf="@id/status"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toEndOf="@id/about"
+		app:layout_constraintTop_toBottomOf="@id/textView"
+		app:layout_constraintVertical_bias="1.0"></EditText>
+
+	<TextView
+		android:id="@+id/textView2"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:gravity="right"
+		android:text="Timelapse service: "
+		app:layout_constraintBottom_toTopOf="@id/view"
+		app:layout_constraintEnd_toStartOf="@id/status"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@id/stop"></TextView>
+
+	<TextView
+		android:id="@+id/status"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:gravity="left"
+		android:text="not running"
+		app:layout_constraintBottom_toTopOf="@id/view"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toEndOf="@+id/textView2"
+		app:layout_constraintTop_toTopOf="@+id/textView2"></TextView>
+
 
 	<TextureView
 		android:id="@+id/view"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:layout_weight="1"
+		android:layout_width="0dp"
+		android:layout_height="0dp"
 		android:text="texture_view"
-	/>
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
-</TableLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 

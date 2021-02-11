@@ -53,9 +53,6 @@ public class Timelapse extends Activity {
 		button = findViewById( R.id.stop );
 		button.setOnClickListener(mUnbindListener);
 
-		button = findViewById(R.id.convert);
-		button.setOnClickListener(mConvertListener);
-
 		button = findViewById(R.id.about);
 		button.setOnClickListener(mAboutListener);
 
@@ -163,14 +160,9 @@ public class Timelapse extends Activity {
 		}
 	};
 
-	private OnClickListener mConvertListener = new OnClickListener() {
-		public void onClick( View v ) {
-		}
-	};
-
 	private OnClickListener mAboutListener = new OnClickListener() {
 		public void onClick( View v ) {
-			String msg = "Background Timelapse 0.2\n(c) 2011 by floe@butterbrot.org\n\nContinously captures VGA images in the background for timelapse videos.\n\nStart: start the capture service\nStop: shut down the service\nConvert All: transform temporary images to PNGs (warning: slow!)\nAbout: this cruft\nDelay: milliseconds between captures";
+			String msg = "Background Timelapse 0.3\n(c) 2021 by floe@butterbrot.org\n\nhttps://github.com/floe/background-timelapse\nContinously captures HD images in the background for timelapse videos.\n\nStart: start the capture service\nStop: shut down the service\nAbout: this cruft\nDelay: milliseconds between captures";
 			new AlertDialog.Builder( Timelapse.this )
 				.setMessage(msg)
 				.setPositiveButton( "Close", new DialogInterface.OnClickListener() { public void onClick(DialogInterface dialog, int id) { dialog.cancel(); }})
