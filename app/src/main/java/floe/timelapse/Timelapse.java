@@ -6,41 +6,23 @@
 
 package floe.timelapse;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.app.ProgressDialog;
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.util.zip.GZIPInputStream;
-import android.os.Handler;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.View;
 import android.view.TextureView;
 import android.view.View.OnClickListener;
-import android.graphics.Bitmap;
-import android.graphics.PixelFormat;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.Toast;
-import android.text.format.Time;
 
 
 public class Timelapse extends Activity {
@@ -50,9 +32,6 @@ public class Timelapse extends Activity {
 
 	private TextureView tv;
 
-	private ProgressDialog pd;
-	private Handler ph = new Handler();
-
 	private final String TAG = "Timelapse";
 
 	@Override protected void onCreate( Bundle savedInstanceState ) {
@@ -61,20 +40,20 @@ public class Timelapse extends Activity {
 		setContentView(R.layout.main);
 
 		// Watch for button clicks.
-		Button button = (Button)findViewById( R.id.start );
+		Button button = findViewById( R.id.start );
 		button.setOnClickListener(mBindListener);
 
-		button = (Button)findViewById( R.id.stop );
+		button = findViewById( R.id.stop );
 		button.setOnClickListener(mUnbindListener);
 
-		button = (Button)findViewById(R.id.convert);
+		button = findViewById(R.id.convert);
 		button.setOnClickListener(mConvertListener);
 
-		button = (Button)findViewById(R.id.about);
+		button = findViewById(R.id.about);
 		button.setOnClickListener(mAboutListener);
 
 		// setup the preview surface
-		tv = (TextureView)findViewById(R.id.view);
+		tv = findViewById(R.id.view);
 
 		// bind to the service, starting it when not yet running
 		myIntent = new Intent( this, TimelapseService.class );

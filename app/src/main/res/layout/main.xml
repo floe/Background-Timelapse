@@ -19,7 +19,7 @@
 			android:layout_weight="1" android:layout_width="0dip"
 			android:text="Convert All">
 		</Button>
-		<TextView	android:id="@+id/filler"
+		<TextView
 			android:layout_weight="1" android:layout_width="0dip"
 			android:gravity="center"
 			android:text="Delay (min.\n1000 ms)">
@@ -37,15 +37,16 @@
 		</Button>
 		<EditText
 			android:id="@+id/delay"
+			android:hint="delay in milliseconds"
 			android:layout_weight="1" android:layout_width="0dip"
-			android:numeric="integer"
-			android:text="1000">
+			android:inputType="number"
+			android:text="1000"
+			android:importantForAutofill="no">
 		</EditText>
 	</TableRow>
 
 	<TableRow>
 		<TextView
-			android:id="@+id/caption"
 			android:layout_weight="1" android:layout_width="0dip"
 			android:gravity="right"
 			android:text="Timelapse service: ">

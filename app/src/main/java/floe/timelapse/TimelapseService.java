@@ -6,33 +6,29 @@
 
 package floe.timelapse;
 
-import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 import android.view.TextureView;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.Parcel;
-import android.os.Looper;
 import android.widget.Toast;
+
+import java.util.Locale;
 import java.util.TimerTask;
 import java.util.Timer;
 import java.util.List;
-import java.lang.Thread;
 import java.lang.String;
 import android.hardware.Camera;
-import android.graphics.PixelFormat;
 import android.graphics.ImageFormat;
 import android.graphics.YuvImage;
 import android.graphics.Rect;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.BufferedOutputStream;
-import java.util.zip.GZIPOutputStream;
 import android.util.Log;
 import android.text.format.Time;
 
@@ -47,6 +43,7 @@ public class TimelapseService extends Service {
 	private PendingIntent contentIntent;
 
 	private final String TAG = "TimelapseService";
+	private final int notifyID = 0xf10e;
 
 	private int counter = 0;
 	private Camera cam;
@@ -65,7 +62,7 @@ public class TimelapseService extends Service {
 
 			Log.v( TAG, "::imageCallback: picture retrieved ("+_data.length+" bytes), storing.." );
 			//String myname = outdir.concat("img").concat(String.valueOf(counter++)).concat(".yuv");
-			String myname = outdir.concat("img").concat(String.format("%06d",counter++)).concat(".jpg");
+			String myname = outdir.concat("img").concat(String.format(Locale.getDefault(),"%06d",counter++)).concat(".jpg");
 
 			// store YUV data
 			try {
@@ -75,7 +72,7 @@ public class TimelapseService extends Service {
 				yuvImage.compressToJpeg(new Rect(0, 0, width, height), 100, fos);
 				fos.close();
 
-				CharSequence text = "Images: ".concat(String.format("%d",counter));
+				CharSequence text = "Images: ".concat(String.format(Locale.getDefault(),"%d",counter));
 				updateNotification( text );
 
 				Log.v( TAG, "::imageCallback: picture stored successfully as " + myname );
@@ -182,7 +179,7 @@ public class TimelapseService extends Service {
 	public void cleanup() {
 
 		// Cancel the persistent notification.
-		mNM.cancel( 0xF10E );
+		mNM.cancel( notifyID );
 
 		// cleanup the camera
 		cam.stopPreview();
@@ -240,8 +237,13 @@ public class TimelapseService extends Service {
 
 		Toast.makeText( this, TAG + " started", Toast.LENGTH_SHORT ).show();
 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			NotificationChannel channel = new NotificationChannel(TAG, "Timelapse Channel", NotificationManager.IMPORTANCE_DEFAULT);
+			mNM.createNotificationChannel(channel);
+		}
+
 		// Display a notification about us starting.  We put an icon in the status bar.
-		notification = new NotificationCompat.Builder(this, "f10e");
+		notification = new NotificationCompat.Builder(this, TAG);
 		notification.setContentTitle( TAG + " started" ); //, System.currentTimeMillis() );
 		notification.setOngoing(true); // flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_ONLY_ALERT_ONCE;
 		notification.setSmallIcon(R.drawable.ic_baseline_camera_enhance_24);
@@ -262,9 +264,8 @@ public class TimelapseService extends Service {
 
 		// Send the notification.
 		// We use a layout id because it is a unique number.  We use it later to cancel.
-		mNM.notify( 0xF10E, notification.build() );
+		mNM.notify( notifyID, notification.build() );
 	}
-
 
 	// helper function to check state
 	public boolean isRunning() {
