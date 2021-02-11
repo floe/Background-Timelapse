@@ -238,7 +238,7 @@ public class TimelapseService extends Service {
 		Toast.makeText( this, TAG + " started", Toast.LENGTH_SHORT ).show();
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			NotificationChannel channel = new NotificationChannel(TAG, "Timelapse Channel", NotificationManager.IMPORTANCE_DEFAULT);
+			NotificationChannel channel = new NotificationChannel(TAG, "Timelapse Channel", NotificationManager.IMPORTANCE_LOW);
 			mNM.createNotificationChannel(channel);
 		}
 
@@ -247,7 +247,7 @@ public class TimelapseService extends Service {
 		notification.setContentTitle( TAG + " started" ); //, System.currentTimeMillis() );
 		notification.setOngoing(true); // flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_ONLY_ALERT_ONCE;
 		notification.setSmallIcon(R.drawable.ic_baseline_camera_enhance_24);
-		notification.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+		notification.setPriority(NotificationCompat.PRIORITY_LOW);
 		notification.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
 		// The PendingIntent to launch our activity if the user selects this notification
